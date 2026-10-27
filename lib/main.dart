@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trilema/data/temas_padrao.dart';
+import 'package:trilema/models/tema.dart';
+
 
 void main() {
   runApp(const TrilemaApp());
@@ -24,57 +27,114 @@ class TrilemaApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TRILEMA'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.balance,
-                size: 90,
-                color: Colors.deepPurple,
-              ),
-              const SizedBox(height: 24),
+      body: SafeArea(
+        child: Column(
+          children: [
 
-              const Text(
-                'TRILEMA',
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
+            const SizedBox(height: 24),
+
+            const Icon(
+              Icons.balance,
+              size: 90,
+              color: Colors.deepPurple,
+            ),
+
+            const SizedBox(height: 12),
+
+            const Text(
+              'TRILEMA',
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            const Text(
+              'Toda escolha tem um custo.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Temas',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-              const Text(
-                'Escolha dois. Abra mão de um.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18),
-              ),
+            Expanded(
+  child: ListView.builder(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    itemCount: temasPadrao.length,
+    itemBuilder: (context, index) {
 
-              const SizedBox(height: 40),
+      final Tema tema = temasPadrao[index];
 
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const TemaPage(),
-                    ),
-                  );
-                },
-                child: const Text('Começar'),
-              ),
-            ],
+      return Card(
+        elevation: 2,
+        child: ListTile(
+          leading: Text(
+            tema.emoji,
+            style: const TextStyle(fontSize: 28),
           ),
+          title: Text(
+            tema.nome,
+          ),
+          subtitle: Text(
+            '${tema.trilemas.length} trilemas',
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => TemaPage(
+                  tema: tema,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    },
+  ),
+),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.add),
+                  label:
+                      const Text('Criar Novo Trilema'),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -82,7 +142,13 @@ class HomePage extends StatelessWidget {
 }
 
 class TemaPage extends StatefulWidget {
-  const TemaPage({super.key});
+
+  final Tema tema;
+
+  const TemaPage({
+    super.key,
+    required this.tema,
+  });
 
   @override
   State<TemaPage> createState() => _TemaPageState();
@@ -123,7 +189,7 @@ class _TemaPageState extends State<TemaPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vida Adulta'),
+        title: Text(widget.tema.nome),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
