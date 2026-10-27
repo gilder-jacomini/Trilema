@@ -49,7 +49,7 @@ const List<Tema> temasPadrao = [
         titulo: 'Desafios Acadêmicos',
         opcoes: [
           'Estágio',
-          'Alto CR',
+          'Alto CR (Coeficiente de rendimento)',
           'Tempo Livre',
         ],
       ),
@@ -124,6 +124,55 @@ const List<Tema> temasPadrao = [
       ),
     ],
   ),
+
+  Tema(
+  nome: 'Esportes',
+  emoji: '⚽',
+  trilemas: [
+    Trilema(
+      titulo: 'Atleta Completo',
+      opcoes: [
+        'Força',
+        'Velocidade',
+        'Resistência',
+      ],
+    ),
+    Trilema(
+      titulo: 'Carreira Esportiva',
+      opcoes: [
+        'Alto Desempenho',
+        'Vida Social',
+        'Saúde Física',
+      ],
+    ),
+    Trilema(
+      titulo: 'Futebol Moderno',
+      opcoes: [
+        'Ataque',
+        'Defesa',
+        'Posse de Bola',
+      ],
+    ),
+    Trilema(
+  titulo: 'Objetivo da Corrida',
+  opcoes: [
+    'Velocidade',
+    'Distância',
+    'Recuperação',
+  ],
+),
+
+Trilema(
+  titulo: 'Jiu-Jitsu - Rola Leve',
+  opcoes: [
+    'Treino Técnico',
+    'Amizade',
+    'Faixa-Branca',
+  ],
+),
+
+  ],
+),
+
 ];
 
-const teste123 = 1;
