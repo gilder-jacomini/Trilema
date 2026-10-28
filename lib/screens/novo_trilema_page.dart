@@ -96,7 +96,7 @@ class _NovoTrilemaPageState extends State<NovoTrilemaPage> {
             const SizedBox(height: 24),
 
           FilledButton(
-           onPressed: () {
+           onPressed: () async {
 
   if (tituloController.text.trim().isEmpty ||
       opcao1Controller.text.trim().isEmpty ||
@@ -129,6 +129,7 @@ class _NovoTrilemaPageState extends State<NovoTrilemaPage> {
 
   TemaRepository.temas[indiceTema].trilemas
       .add(novoTrilema);
+      await TemaRepository.salvar();
 
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(

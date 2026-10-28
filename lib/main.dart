@@ -5,8 +5,15 @@ import 'package:trilema/repositories/tema_repository.dart';
 import 'package:trilema/widgets/trilema_card.dart';
 import 'package:trilema/screens/novo_trilema_page.dart';
 
-void main() {
-  runApp(const TrilemaApp());
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await TemaRepository.carregar();
+
+  runApp(
+    const TrilemaApp(),
+  );
 }
 
 class TrilemaApp extends StatelessWidget {
@@ -23,9 +30,14 @@ class TrilemaApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,13 +177,15 @@ class HomePage extends StatelessWidget {
                 child: FilledButton.icon(
                   icon: const Icon(Icons.add),
                   label: const Text('Criar Novo Trilema'),
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => const NovoTrilemaPage(),
                       ),
                     );
+
+                    setState(() {});
                   },
                 ),
               ),
