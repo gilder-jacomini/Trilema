@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trilema/data/temas_padrao.dart';
 import 'package:trilema/models/tema.dart';
+import 'package:trilema/models/trilema.dart';
+import 'package:trilema/repositories/tema_repository.dart';
+
 
 
 class NovoTrilemaPage extends StatefulWidget {
@@ -92,25 +95,51 @@ class _NovoTrilemaPageState extends State<NovoTrilemaPage> {
 
             const SizedBox(height: 24),
 
-            FilledButton(
-  onPressed: () {
+          FilledButton(
+           onPressed: () {
 
-    if (tituloController.text.trim().isEmpty ||
-        opcao1Controller.text.trim().isEmpty ||
-        opcao2Controller.text.trim().isEmpty ||
-        opcao3Controller.text.trim().isEmpty) {
+  if (tituloController.text.trim().isEmpty ||
+      opcao1Controller.text.trim().isEmpty ||
+      opcao2Controller.text.trim().isEmpty ||
+      opcao3Controller.text.trim().isEmpty) {
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preencha todos os campos.'),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Preencha todos os campos.',
         ),
-      );
+      ),
+    );
 
-      return;
-    }
+    return;
+  }
 
-    Navigator.pop(context);
-  },
+  final novoTrilema = Trilema(
+    titulo: tituloController.text.trim(),
+    opcoes: [
+      opcao1Controller.text.trim(),
+      opcao2Controller.text.trim(),
+      opcao3Controller.text.trim(),
+    ],
+  );
+
+  final indiceTema = TemaRepository.temas.indexWhere(
+    (tema) => tema.nome == temaSelecionado!.nome,
+  );
+
+  TemaRepository.temas[indiceTema].trilemas
+      .add(novoTrilema);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text(
+        'Trilema criado com sucesso!',
+      ),
+    ),
+  );
+
+  Navigator.pop(context);
+}, 
   child: const Text('Salvar'),
 )
           ],
