@@ -4,16 +4,19 @@ import 'package:trilema/models/tema.dart';
 import 'package:trilema/repositories/tema_repository.dart';
 import 'package:trilema/widgets/trilema_card.dart';
 import 'package:trilema/screens/novo_trilema_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'firebase_options.dart';
+
+import 'package:trilema/services/firebase_service.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await TemaRepository.carregar();
 
-  runApp(
-    const TrilemaApp(),
-  );
+  runApp(const TrilemaApp());
 }
 
 class TrilemaApp extends StatelessWidget {
@@ -24,7 +27,11 @@ class TrilemaApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TRILEMA',
-      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0D0D0D),
+
+        colorScheme: ColorScheme.dark(primary: Colors.yellow.shade700),
+      ),
       home: const HomePage(),
     );
   }
@@ -40,28 +47,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final int totalTrilemas = TemaRepository.temas.fold(
+      0,
+      (total, tema) => total + tema.trilemas.length,
+    );
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 24),
 
-            const Icon(Icons.balance, size: 90, color: Colors.deepPurple),
+            Image.asset('assets/images/logo-trilema.png', height: 160),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '$totalTrilemas trilemas disponíveis',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
 
             const SizedBox(height: 12),
 
-            const Text(
-              'TRILEMA',
-              style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
-            ),
-
             const SizedBox(height: 8),
-
-            const Text(
-              'Toda escolha tem um custo.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
 
             const SizedBox(height: 30),
 
@@ -90,7 +105,15 @@ class _HomePageState extends State<HomePage> {
                     margin: const EdgeInsets.only(bottom: 12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () {
+                      onTap: () async {
+                        try {
+                          await TrilemaFirebaseService.registrarTemaAcessado(
+                            tema.nome,
+                          );
+                        } catch (e) {
+                          print('ERRO FIREBASE: $e');
+                        }
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -128,17 +151,18 @@ class _HomePageState extends State<HomePage> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.deepPurple.shade100,
+                                    color: Colors.amber,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     '${tema.trilemas.length}',
                                     style: const TextStyle(
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
-
                                 const SizedBox(width: 8),
 
                                 const Icon(Icons.arrow_forward_ios, size: 16),
@@ -155,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: Colors.grey.shade300,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -207,22 +231,38 @@ class TemaPage extends StatefulWidget {
 }
 
 class _TemaPageState extends State<TemaPage> {
+  Tema get temaAtual {
+    return TemaRepository.temas.firstWhere(
+      (tema) => tema.nome == widget.tema.nome,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.tema.nome)),
+      appBar: AppBar(title: Text(temaAtual.nome)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            '${widget.tema.emoji} ${widget.tema.nome}',
+            '${temaAtual.emoji} ${widget.tema.nome}',
             style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
-          ...widget.tema.trilemas.map(
-            (trilema) => TrilemaCard(trilema: trilema),
+          ...temaAtual.trilemas.map(
+            (trilema) => TrilemaCard(
+              trilema: trilema,
+
+              onExcluir: () async {
+                temaAtual.trilemas.remove(trilema);
+
+                await TemaRepository.salvar();
+
+                setState(() {});
+              },
+            ),
           ),
         ],
       ),

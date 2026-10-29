@@ -1,7 +1,7 @@
 import '../models/tema.dart';
 import '../models/trilema.dart';
 
-const List<Tema> temasPadrao = [
+final List<Tema> temasPadrao = [
   Tema(
     nome: 'Vida Adulta',
     emoji: '⚖️',

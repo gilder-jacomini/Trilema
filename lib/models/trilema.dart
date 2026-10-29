@@ -1,27 +1,27 @@
 class Trilema {
-  final String titulo;
-  final List<String> opcoes;
+  String titulo;
+  List<String> opcoes;
+  bool criadoPeloUsuario;
 
-  const Trilema({
+  Trilema({
     required this.titulo,
     required this.opcoes,
+    this.criadoPeloUsuario = false,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'titulo': titulo,
       'opcoes': opcoes,
+      'criadoPeloUsuario': criadoPeloUsuario,
     };
   }
 
-  factory Trilema.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory Trilema.fromMap(Map<String, dynamic> map) {
     return Trilema(
       titulo: map['titulo'],
-      opcoes: List<String>.from(
-        map['opcoes'],
-      ),
+      opcoes: List<String>.from(map['opcoes']),
+      criadoPeloUsuario: map['criadoPeloUsuario'] ?? false,
     );
   }
 }

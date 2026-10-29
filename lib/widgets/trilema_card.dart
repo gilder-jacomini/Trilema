@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:trilema/screens/novo_trilema_page.dart';
+
 import '../models/trilema.dart';
 
 class TrilemaCard extends StatefulWidget {
   final Trilema trilema;
 
-  const TrilemaCard({
-    super.key,
-    required this.trilema,
-  });
+  final VoidCallback? onExcluir;
+
+  const TrilemaCard({super.key, required this.trilema, this.onExcluir});
 
   @override
   State<TrilemaCard> createState() => _TrilemaCardState();
@@ -21,10 +22,7 @@ class _TrilemaCardState extends State<TrilemaCard> {
   void initState() {
     super.initState();
 
-    ativos = List.generate(
-      widget.trilema.opcoes.length,
-      (_) => false,
-    );
+    ativos = List.generate(widget.trilema.opcoes.length, (_) => false);
   }
 
   void alterarSwitch(int index, bool valor) {
@@ -56,21 +54,56 @@ class _TrilemaCardState extends State<TrilemaCard> {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            Text(
-              widget.trilema.titulo,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.trilema.titulo,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ),
+
+                if (widget.trilema.criadoPeloUsuario)
+                  //if (true)
+                  PopupMenuButton<String>(
+                    onSelected: (value) async {
+                      if (value == 'excluir') {
+                        widget.onExcluir?.call();
+                      }
+
+                      if (value == 'editar') {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NovoTrilemaPage(
+                              trilemaParaEditar: widget.trilema,
+                            ),
+                          ),
+                        );
+
+                        setState(() {});
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'editar',
+                        child: Text('Editar'),
+                      ),
+
+                      const PopupMenuItem(
+                        value: 'excluir',
+                        child: Text('Excluir'),
+                      ),
+                    ],
+                  ),
+              ],
             ),
 
             const SizedBox(height: 8),
 
             for (int i = 0; i < widget.trilema.opcoes.length; i++)
               SwitchListTile(
-                title: Text(
-                  widget.trilema.opcoes[i],
-                ),
+                title: Text(widget.trilema.opcoes[i]),
                 value: ativos[i],
                 onChanged: (valor) {
                   alterarSwitch(i, valor);

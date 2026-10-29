@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1058539965493",
+    "project_id": "gil-apps",
+    "storage_bucket": "gil-apps.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058539965493:android:fa282592c29e8df169357c",
+        "android_client_info": {
+          "package_name": "com.example.trilema"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA42n_7T3KZhB0itdEx8YccUPOxPUQOhc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
